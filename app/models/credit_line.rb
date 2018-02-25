@@ -1,0 +1,2 @@
+class CreditLine < ApplicationRecord
+end
