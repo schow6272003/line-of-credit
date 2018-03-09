@@ -1,0 +1,21 @@
+
+<form id="transaction-form">
+  <div class="form-row">
+     <div class="col-md-7 mb-3">
+      <label for="transaction-amount-input">Make Transaction</label>
+      <input type="text" id="transaction-amount-input" >
+    </div>
+    <div class="col-md-4 mb-3">
+      <button type="button" class="btn btn-primary mb-2 transaction-submit-button" data-option="withdraw" data-creditlineid="4">Withdraw</button>
+      <button type="button" class="btn btn-warning mb-2 transaction-submit-button" data-option="deposit" data-creditlineid="4">Payment</button>
+    </div>
+  </div>
+</form>
+<div class="alert alert-danger payoff-reminder">
+    Your payment is due on <span id="payment-due-date"></span>. Please make payment.
+</div>
+<div class="payoff-reminder" >
+    <button  id="make-payment-butto" type="button" class="btn btn-warning mb-2">Make Payment</button>
+</div>
+
+

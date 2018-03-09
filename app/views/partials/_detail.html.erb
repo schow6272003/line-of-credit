@@ -1,0 +1,30 @@
+<div id="credit-line-detail-block" style="display: none;">
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#summary">Summary</a></li>
+    <li><a data-toggle="tab" href="#activities">Activities</a></li>
+    <li><a data-toggle="tab" href="#transaction">Make Transaction</a></li>
+    <li><a data-toggle="tab" href="#bill">Pay Bill</a></li>
+  </ul>
+
+  <div class="tab-content">
+      <div id="summary" class="tab-pane fade in active">
+         <%= render :partial => 'partials/detail/summary' %>
+      </div>
+      <div id="activities" class="tab-pane fade">
+        <div class="tab-content-container">
+          <%= render :partial => 'partials/detail/activities' %>
+       </div>
+      </div>
+      <div id="transaction" class="tab-pane fade">
+        <div class="tab-content-container">
+          <%= render :partial => 'partials/detail/transaction' %>
+        </div>
+      </div>
+      <div id="bill" class="tab-pane fade">
+        <div class="tab-content-container">
+          <%= render :partial => 'partials/detail/bill' %>
+        </div>
+      </div>
+  </div>
+</div>
+

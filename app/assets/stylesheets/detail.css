@@ -1,0 +1,29 @@
+/*#credit-line-detail-block{
+  display: none;
+}*/
+
+/*#credit-line-detail-crumb-block{
+   display: none;
+}*/
+/*#return-to-credit-line-main{
+
+}*/
+
+#return-to-credit-line-main:hover{
+  cursor: pointer;
+};
+
+.tab-content-container {
+  margin-top: 20px;
+  width: 80%;
+}
+
+table.table-custum  tr  td {
+  border: 0px !important;
+}
+
+.payoff-reminder{
+   width: 80%;
+   text-align: center;
+   display:none;
+}

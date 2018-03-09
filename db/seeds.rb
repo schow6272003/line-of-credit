@@ -4,4 +4,12 @@
 # Examples:
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+#   Character.create(name: 'Luke', movie: movies.first) 
+
+
+# user = User.create(:email => "wenwoechow@gmail.com", :full_name => "Steven Chow")
+
+
+# user.credit_lines.create(balance: 1000)
+
+

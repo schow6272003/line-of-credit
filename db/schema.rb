@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180225011540) do
+ActiveRecord::Schema.define(version: 20180228053724) do
 
   create_table "credit_lines", force: :cascade do |t|
     t.integer "user_id"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20180225011540) do
     t.datetime "currnet_close_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "enable"
     t.index ["user_id"], name: "index_credit_lines_on_user_id"
   end
 
@@ -32,6 +33,7 @@ ActiveRecord::Schema.define(version: 20180225011540) do
     t.decimal "amount", precision: 12, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "paid"
     t.index ["credit_line_id"], name: "index_payment_cycles_on_credit_line_id"
   end
 
@@ -40,6 +42,9 @@ ActiveRecord::Schema.define(version: 20180225011540) do
     t.decimal "amount", precision: 12, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "option"
+    t.float "interest"
+    t.decimal "remaining_balance", precision: 12, scale: 2
     t.index ["credit_line_id"], name: "index_transactions_on_credit_line_id"
   end
 

@@ -1,0 +1,254 @@
+$(document).ready( function() {
+
+/****** transactions *******/
+
+ $("#make-payment-button").on("click", function(){
+   $('.nav-tabs a[href="#bill"]').tab('show');
+ });
+
+
+  //Create transactions 
+  $(".transaction-submit-button").on("click", function(){
+
+
+        $.ajax({
+          url:"/api/v1/transactions",
+          method: "post",
+          data:{
+            "user_id": 2, 
+            "credit_line_id": $(this).data("creditlineid"),
+            "amount": $("#transaction-amount-input").val(), 
+            "option": $(this).data("option")
+          },
+          dataType:"json",
+          success: function(data){
+            console.log(data);
+            var withdraw, deposit;
+          if (data.status == 201) {
+
+                    if (data.transaction.option == "withdraw" ) {
+                        withdraw = appTools.numberToCurrency(data.transaction.amount);
+                        deposit  = "";
+                    } else if (data.transaction.option == "deposit") {
+                       deposit = appTools.numberToCurrency(data.transaction.amount);
+                       withdraw = "";
+                    }
+
+
+                $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(data.transaction.created_at) 
+                                                    + "</td><td>" + withdraw + "</td><td>"+ deposit + "</td><td>"
+                                                    + data.transaction.remaining_balance +"</td></tr>");
+
+
+            $("#credit-line-credit-balance").text("$" + data.transaction.remaining_balance);
+          }
+
+          $("#transaction-amount-input").val("");
+            console.log("success");
+          },
+          error: function(xhr, status, error){
+            console.log("failed")
+             $("#transaction-amount-input").val("");
+          }
+        }); 
+
+
+
+  }); //End of submit transaction 
+  
+
+
+   $("#open-new-credit-line-modal").on("click", function(){
+      $("#creditLineEditInvestorFormModal").modal();
+   }) 
+
+
+    $("#create-credit-line").on("click",function(e){
+      $("#creditLineEditInvestorFormModal").modal("hide");
+
+        e.preventDefault();
+        $.ajax({
+          url:"/api/v1/credit_lines",
+          data:{
+            "user_id": 2,
+            "limit": $("#creditLineLimit").val(),
+            "balance": $("#creditLineLimit").val(), 
+            "number_of_days": $("#numberOfDays").val(),
+            "description": $("#description").val(),
+            "interest":$("#arp").val()
+          },
+          method: "post",
+          dataType:"json",
+          success: function(data){
+            console.log(data);
+          if (data.status == 201) {
+            $("tbody#line-credit-table-row").append("<tr><td>"+ data.credit_line.created_at 
+                                              + "</td><td>"+ data.credit_line.description +"</td><td>"
+                                              + data.credit_line.limit + "</td><td>"+ data.credit_line.balance + "</td><td>"
+                                              + data.credit_line.interest +"</td><td>"+ data.credit_line.number_of_days 
+                                              +"</td><td>Action" +"</td></tr>");
+
+          }
+
+
+            console.log("success");
+          },
+          error: function(xhr, status, error){
+            console.log("failed")
+          }
+        });
+    })
+
+
+$('#myModal').on('hidden.bs.modal', function () {
+    // do something…
+})
+
+
+function resetFormFields() {
+  $("#creditLineLimit").val("");
+  $("#creditLineLimit").val(""); 
+  $("#numberOfDays").val("");
+  $("#description").val("");
+  $("#arp").val(""); 
+}
+
+
+  /***************** Access Credit Line *****************/
+
+  $(".access-to-credit-line").on("click",function(){
+     console.log($(this).data("id"));
+    $("#line-credit-main-table").hide();
+    $("#open-new-credit-line-modal").hide();
+    $("#credit-line-detail-crumb-block").fadeIn();
+    $("#credit-line-detail-block").fadeIn();
+    $("#transactions-table-row").empty();
+
+        $.ajax({
+          url:" /api/v1/credit_lines/" + $(this).data("id"),
+          method: "get",
+          data: {"user_id": 2},
+          dataType:"json",
+          success: function(data){
+            console.log(data);
+          if (data.status == 200) {
+           console.log("hello");
+           $("#credit-line-credit-date").text( appTools.formatDate(data.credit_line.created_at));
+           $("#credit-line-credit-description").text(data.credit_line.description);
+           $("#credit-line-description").text(data.credit_line.description);
+           $("#credit-line-credit-limit").text(appTools.numberToCurrency(data.credit_line.limit));
+           $("#credit-line-credit-balance").text(appTools.numberToCurrency(data.credit_line.balance));
+           $("#credit-line-credit-arp").text(data.credit_line.interest*100 + "%");
+           $("#credit-line-credit-payment-period").text(data.credit_line.number_of_days);
+
+            // if(data.payment_cycles.length > 0) {
+              if (data.payment_cycle) {
+                $("#credit-line-closing-date").text(appTools.formatDate(data.payment_cycle.close_date));
+                if (data.payment_cycle.paid == false){
+                    $(".payoff-reminder").show();
+                    $("#transaction-form").hide();
+                    $("#credit-line-due-date").text(appTools.formatDate(data.payment_cycle.close_date));
+                    $("#payment-due-date").text(appTools.formatDate(data.payment_cycle.close_date));
+                    var outstanding_balance = Number(data.credit_line.limit) - Number(data.credit_line.balance);
+                    $("#credit-line-outstanding-balance").text(appTools.numberToCurrency(outstanding_balance));
+                    $("#credit-line-total-payoff-balance").text(appTools.numberToCurrency(data.payment_cycle.amount));
+                    $("#credit-line-credit-total-payoff-interest").text( appTools.numberToCurrency( Number(data.payment_cycle.amount) - outstanding_balance ) );
+                    // $("#payoffamount").val(Number(data.payment_cycle.amount));
+                    $("#payoff-payment-cycle-id").val(data.payment_cycle.id);
+        
+                }
+              }
+              
+            // }
+
+           /** Submit buttom **/
+           $(".transaction-submit-button").data("id",data.credit_line.id);
+          //   $("#line-credit-table-row").append("<tr><td>"+ data.credit_line.created_at 
+          //                                     + "</td><td>"+ data.credit_line.description +"</td><td>"
+          //                                     + data.credit_line.limit + "</td><td>"+ data.credit_line.balance + "</td><td>"
+          //                                     + data.credit_line.interest +"</td><td>"+ data.credit_line.number_of_days 
+          //                                     +"</td><td>Action" +"</td></tr>");
+
+
+
+            if (data.transactions.length > 0 ) {
+                var deposit, withdraw;
+                $.each(data.transactions, function(i, t){
+                    if (t.option == "withdraw" ) {
+                        withdraw = appTools.numberToCurrency(Number(t.amount));
+                        deposit  = "";
+                    } else if (t.option == "deposit") {
+                       deposit = appTools.numberToCurrency(Number(t.amount));
+                       withdraw = "";
+                    }
+
+                  $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(t.created_at) + "</td><td>" 
+                                                    + withdraw + "</td><td>"+ deposit + "</td><td>"
+                                                    // + Number(t.interest).toFixed(2)+ "</td><td>"
+                                                    + appTools.numberToCurrency(t.remaining_balance) +"</td></tr>");
+                })
+            }
+
+          }
+
+
+            console.log("success");
+          },
+          error: function(xhr, status, error){
+            console.log("failed")
+          }
+        });
+
+
+
+
+
+  })
+
+  $("#return-to-credit-line-main").on("click",function(){
+    $("#line-credit-main-table").fadeIn();
+    $("#open-new-credit-line-modal").fadeIn();
+    $("#credit-line-detail-crumb-block").hide();
+    $("#credit-line-detail-block").hide();
+    $("#transactions-table-row").empty();
+    $('.nav-tabs a[href="#summary"]').tab('show');
+    $("#credit-line-closing-date").text("");
+    $("#credit-line-due-date").text("");
+    $("#credit-line-credit-total-payoff-interest").text("");
+    $("#credit-line-outstanding-balance").text("");
+    $("#payoff-payment-cycle-id").text("");
+  })
+
+
+
+  /***************** Delete Credit Line *****************/
+   $( ".delete-credit-line").on("click",function(){
+      console.log($(this).data("id"));
+       $.ajax({
+          url:"/api/v1/credit_lines/" + $(this).data("id"),
+          data:{
+            "user_id": 2
+          },
+
+          method: "delete",
+          dataType:"json",
+          success: function(data){
+              console.log(data);
+            if (data.status == 200) {
+              $("#credit-line-"+ data.id ).remove();
+
+              // alert("successfully delete credit line " +  data.id );
+            }
+
+          },
+          error: function(xhr, status, error){
+            console.log("failed")
+          } 
+        });
+
+
+
+   })
+
+
+});

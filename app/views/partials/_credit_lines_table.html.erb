@@ -1,0 +1,26 @@
+<table  id="line-credit-main-table" class="table">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Description</th>
+      <th scope="col">Limit</th>
+      <th scope="col">Balance</th>
+      <th scope="col">ARP</th>
+      <th scope="col">Number of Days</th>
+      <th scope="col">action</th>
+    </tr>
+  </thead>
+  <tbody id="line-credit-table-row">
+      <% credit_lines.each do |credit_line |%>
+        <tr id="credit-line-<%= credit_line.id %>">
+          <td><%= credit_line.created_at.try(:strftime, "%Y-%m-%d") %></td>
+          <td><%= credit_line.description %></td>
+          <td><%= number_to_currency(credit_line.limit.to_f, precision: 2) %></td>
+          <td><%=  number_to_currency(credit_line.balance.to_f, precision: 2) %></td>
+          <td><%=  number_to_percentage(credit_line.interest.to_f * 100, precision: 0) %></td>
+          <td><%= credit_line.number_of_days %> Days</td>
+          <td><span style=" display: block; float: left;"><button id="access-to-credit-line"  data-id="<%= credit_line.id %>"  type="button" class="btn btn-info access-to-credit-line">access</button></span><span style="display: block; float: right;"><button id="delete-credit-line" data-id="<%= credit_line.id %>" type="button" class="btn btn-danger delete-credit-line">Delete</button></span></td>
+        </tr>
+      <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,30 @@
+$(document).ready( function() {
+
+
+  $("#payoff-submit").on("click", function(){
+        $.ajax({
+          url:"/api/v1/payment_cycles/" + $("#payoff-payment-cycle-id").val(),
+          method: "put",
+          data:{
+            "user_id": 2
+          },
+          dataType:"json",
+          success: function(data){
+            console.log("success");
+            console.log(data)
+          },
+          error: function(xhr, status, error){
+             console.log("failure");
+         
+          }
+        }); 
+
+
+
+
+
+  });
+
+
+
+});

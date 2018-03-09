@@ -1,0 +1,5 @@
+module CreditLineHelper
+  DEFAULT_CREDIT_LINE = 1000
+  DEFAULT_APR = 0.35
+  DEFAULT_NUM_OF_DAYS = 30
+end
