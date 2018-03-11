@@ -22,7 +22,7 @@ table.table-custum  tr  td {
   border: 0px !important;
 }
 
-.payoff-reminder{
+.payoff-reminder {
    width: 80%;
    text-align: center;
    display:none;

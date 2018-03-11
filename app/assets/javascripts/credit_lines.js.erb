@@ -9,8 +9,6 @@ $(document).ready( function() {
 
   //Create transactions 
   $(".transaction-submit-button").on("click", function(){
-
-
         $.ajax({
           url:"/api/v1/transactions",
           method: "post",
@@ -21,26 +19,23 @@ $(document).ready( function() {
             "option": $(this).data("option")
           },
           dataType:"json",
-          success: function(data){
-            console.log(data);
+          success: function(Transaction, textStatus, xhr){
             var withdraw, deposit;
-          if (data.status == 201) {
-
-                    if (data.transaction.option == "withdraw" ) {
-                        withdraw = appTools.numberToCurrency(data.transaction.amount);
+          if (xhr.status == 201) {
+                    if (Transaction.option == "withdraw" ) {
+                        withdraw = appTools.numberToCurrency(Transaction.amount);
                         deposit  = "";
-                    } else if (data.transaction.option == "deposit") {
-                       deposit = appTools.numberToCurrency(data.transaction.amount);
+                    } else if (Transaction.option == "deposit") {
+                       deposit = appTools.numberToCurrency(Transaction.amount);
                        withdraw = "";
                     }
 
-
-                $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(data.transaction.created_at) 
+                $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(Transaction.created_at) 
                                                     + "</td><td>" + withdraw + "</td><td>"+ deposit + "</td><td>"
-                                                    + data.transaction.remaining_balance +"</td></tr>");
+                                                    + Transaction.remaining_balance +"</td></tr>");
 
 
-            $("#credit-line-credit-balance").text("$" + data.transaction.remaining_balance);
+            $("#credit-line-credit-balance").text("$" + Transaction.remaining_balance);
           }
 
           $("#transaction-amount-input").val("");
@@ -79,15 +74,14 @@ $(document).ready( function() {
           },
           method: "post",
           dataType:"json",
-          success: function(data){
-            console.log(data);
-          if (data.status == 201) {
-            $("tbody#line-credit-table-row").append("<tr><td>"+ data.credit_line.created_at 
-                                              + "</td><td>"+ data.credit_line.description +"</td><td>"
-                                              + data.credit_line.limit + "</td><td>"+ data.credit_line.balance + "</td><td>"
-                                              + data.credit_line.interest +"</td><td>"+ data.credit_line.number_of_days 
-                                              +"</td><td>Action" +"</td></tr>");
-
+          // success: function(data){
+          success: function(creditLine, textStatus, xhr){
+          if (xhr.status == 201) {
+            $("tbody#line-credit-table-row").append("<tr><td>"+ appTools.formatDate(creditLine.created_at) 
+                                              + "</td><td>"+ creditLine.description +"</td><td>"
+                                              + appTools.numberToCurrency(creditLine.limit) + "</td><td>"+ appTools.numberToCurrency(creditLine.balance) + "</td><td>"
+                                              + creditLine.interest*100 + "%" +"</td><td>"+ creditLine.number_of_days + " Days"
+                                              +"</td><td>" + '<span style=" display: block; float: left;"><button id="access-to-credit-line"  data-id="'+ creditLine.id +'"  type="button" class="btn btn-info access-to-credit-line">access</button></span><span style="display: block; float: right;"><button id="delete-credit-line" data-id="'+ creditLine.id +'" type="button" class="btn btn-danger delete-credit-line">Delete</button></span>' +"</td></tr>");
           }
 
 
@@ -117,7 +111,6 @@ function resetFormFields() {
   /***************** Access Credit Line *****************/
 
   $(".access-to-credit-line").on("click",function(){
-     console.log($(this).data("id"));
     $("#line-credit-main-table").hide();
     $("#open-new-credit-line-modal").hide();
     $("#credit-line-detail-crumb-block").fadeIn();
@@ -129,10 +122,8 @@ function resetFormFields() {
           method: "get",
           data: {"user_id": 2},
           dataType:"json",
-          success: function(data){
-            console.log(data);
-          if (data.status == 200) {
-           console.log("hello");
+          success: function(data, textStatus, xhr){
+          if (xhr.status == 200) {
            $("#credit-line-credit-date").text( appTools.formatDate(data.credit_line.created_at));
            $("#credit-line-credit-description").text(data.credit_line.description);
            $("#credit-line-description").text(data.credit_line.description);
@@ -223,21 +214,16 @@ function resetFormFields() {
 
   /***************** Delete Credit Line *****************/
    $( ".delete-credit-line").on("click",function(){
-      console.log($(this).data("id"));
        $.ajax({
           url:"/api/v1/credit_lines/" + $(this).data("id"),
           data:{
             "user_id": 2
           },
-
           method: "delete",
           dataType:"json",
-          success: function(data){
-              console.log(data);
-            if (data.status == 200) {
-              $("#credit-line-"+ data.id ).remove();
-
-              // alert("successfully delete credit line " +  data.id );
+          success: function(creditLineId, textStatus, xhr){
+            if (xhr.status == 200) {
+              $("#credit-line-"+ creditLineId).remove();
             }
 
           },

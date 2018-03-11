@@ -16,15 +16,11 @@ module Api
         # end 
 
         def create
-          @transaction = Transaction.new(transaction_params)
-
-          p "----- create transaction ------"
-          p transaction_params
-
-          if @transaction.save
-            render json: { "status" => 201, "transaction" => @transaction}
+          transaction = Transaction.new(transaction_params)
+          if transaction.save
+            render json: transaction, status: 201
           else
-            render json: @transaction.errors, status: :unprocessable_entit
+            render json: transaction.errors, status: :unprocessable_entit
           end 
         end
 
