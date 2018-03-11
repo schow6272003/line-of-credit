@@ -2,7 +2,7 @@ module Api
   module V1
       class TransactionsController  < ApplicationController
 
-        before_action :set_user
+        before_action :authenticate_request!
 
         # def show
         #   @credit_line = CreditLine.includes(:payment_cycles, :transactions).find(params[:id])
@@ -38,9 +38,6 @@ module Api
 
 
         private
-         def set_user
-           @user = User.find(params[:user_id])
-         end
 
         def transaction_params
           params.permit(:credit_line_id, :option, :amount)

@@ -6,11 +6,11 @@ Rails.application.routes.draw do
          resources :credit_lines
          resources :transactions 
          resources :payment_cycles 
+         resources :users
+         resources :sessions
+        end
       end 
    end 
-
-
-
 
   root "pages#index"
 

@@ -3,9 +3,10 @@ module Api
       class CreditLinesController  < ApplicationController
         require "date"
 
-        before_action :set_user
+        before_action :authenticate_request!
+
         def index
-          render json: @user.credit_lines
+          render json: @current_user.credit_lines
         end
 
         def show
@@ -38,10 +39,6 @@ module Api
         end
 
         private
-         def set_user
-          @user = User.find(params[:user_id])
-         end
-
          def credit_line_params
           params.permit(:user_id, :description, :limit, :balance, :interest, :number_of_days)
          end

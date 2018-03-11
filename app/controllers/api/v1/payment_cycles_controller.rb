@@ -3,9 +3,8 @@ module Api
       class PaymentCyclesController  < ApplicationController
         require "date"
 
+        before_action :authenticate_request!
         before_action :set_user
-        def show
-        end
         
         def update
             payment_cycle = PaymentCycle.find(params[:id])
@@ -22,10 +21,6 @@ module Api
             end 
         end 
 
-        private
-         def set_user
-           @user = User.find(params[:user_id])
-         end
      end
   end
 end

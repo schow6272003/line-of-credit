@@ -11,9 +11,11 @@ $(document).ready( function() {
   $(".transaction-submit-button").on("click", function(){
         $.ajax({
           url:"/api/v1/transactions",
+          headers: {
+                  'Authorization': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.mdhf3iJDUYR3BZLzuHzyCrUn_DZqKBN35jzJxb1hjAI"
+                },
           method: "post",
           data:{
-            "user_id": 2, 
             "credit_line_id": $(this).data("creditlineid"),
             "amount": $("#transaction-amount-input").val(), 
             "option": $(this).data("option")
@@ -64,8 +66,10 @@ $(document).ready( function() {
         e.preventDefault();
         $.ajax({
           url:"/api/v1/credit_lines",
+          headers: {
+                'Authorization': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.mdhf3iJDUYR3BZLzuHzyCrUn_DZqKBN35jzJxb1hjAI"
+              },
           data:{
-            "user_id": 2,
             "limit": $("#creditLineLimit").val(),
             "balance": $("#creditLineLimit").val(), 
             "number_of_days": $("#numberOfDays").val(),
@@ -111,82 +115,73 @@ function resetFormFields() {
   /***************** Access Credit Line *****************/
 
   $(".access-to-credit-line").on("click",function(){
-    $("#line-credit-main-table").hide();
-    $("#open-new-credit-line-modal").hide();
-    $("#credit-line-detail-crumb-block").fadeIn();
-    $("#credit-line-detail-block").fadeIn();
-    $("#transactions-table-row").empty();
+     $("#transactions-table-row").empty();
 
         $.ajax({
           url:" /api/v1/credit_lines/" + $(this).data("id"),
           method: "get",
-          data: {"user_id": 2},
+          headers: {
+            'Authorization': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.mdhf3iJDUYR3BZLzuHzyCrUn_DZqKBN35jzJxb1hjAI"
+          },
           dataType:"json",
           success: function(data, textStatus, xhr){
-          if (xhr.status == 200) {
-           $("#credit-line-credit-date").text( appTools.formatDate(data.credit_line.created_at));
-           $("#credit-line-credit-description").text(data.credit_line.description);
-           $("#credit-line-description").text(data.credit_line.description);
-           $("#credit-line-credit-limit").text(appTools.numberToCurrency(data.credit_line.limit));
-           $("#credit-line-credit-balance").text(appTools.numberToCurrency(data.credit_line.balance));
-           $("#credit-line-credit-arp").text(data.credit_line.interest*100 + "%");
-           $("#credit-line-credit-payment-period").text(data.credit_line.number_of_days);
+            if (xhr.status == 200) {
+              $("#line-credit-main-table").hide();
+              $("#open-new-credit-line-modal").hide();
+              $("#credit-line-detail-crumb-block").fadeIn();
+              $("#credit-line-detail-block").fadeIn();
+             
+              $("#credit-line-credit-date").text( appTools.formatDate(data.credit_line.created_at));
+              $("#credit-line-credit-description").text(data.credit_line.description);
+              $("#credit-line-description").text(data.credit_line.description);
+              $("#credit-line-credit-limit").text(appTools.numberToCurrency(data.credit_line.limit));
+              $("#credit-line-credit-balance").text(appTools.numberToCurrency(data.credit_line.balance));
+              $("#credit-line-credit-arp").text(data.credit_line.interest*100 + "%");
+              $("#credit-line-credit-payment-period").text(data.credit_line.number_of_days);
+   
+                if (data.payment_cycle) {
+                  $("#credit-line-closing-date").text(appTools.formatDate(data.payment_cycle.close_date));
+                  if (data.payment_cycle.paid == false){
+                      $(".payoff-reminder").show();
+                      $("#transaction-form").hide();
+                      $("#credit-line-due-date").text(appTools.formatDate(data.payment_cycle.close_date));
+                      $("#payment-due-date").text(appTools.formatDate(data.payment_cycle.close_date));
+                      
+                      var outstanding_balance = Number(data.credit_line.limit) - Number(data.credit_line.balance);
+                      $("#credit-line-outstanding-balance").text(appTools.numberToCurrency(outstanding_balance));
+                      $("#credit-line-total-payoff-balance").text(appTools.numberToCurrency(data.payment_cycle.amount));
+                      $("#credit-line-credit-total-payoff-interest").text( appTools.numberToCurrency( Number(data.payment_cycle.amount) - outstanding_balance ) );
 
-            // if(data.payment_cycles.length > 0) {
-              if (data.payment_cycle) {
-                $("#credit-line-closing-date").text(appTools.formatDate(data.payment_cycle.close_date));
-                if (data.payment_cycle.paid == false){
-                    $(".payoff-reminder").show();
-                    $("#transaction-form").hide();
-                    $("#credit-line-due-date").text(appTools.formatDate(data.payment_cycle.close_date));
-                    $("#payment-due-date").text(appTools.formatDate(data.payment_cycle.close_date));
-                    var outstanding_balance = Number(data.credit_line.limit) - Number(data.credit_line.balance);
-                    $("#credit-line-outstanding-balance").text(appTools.numberToCurrency(outstanding_balance));
-                    $("#credit-line-total-payoff-balance").text(appTools.numberToCurrency(data.payment_cycle.amount));
-                    $("#credit-line-credit-total-payoff-interest").text( appTools.numberToCurrency( Number(data.payment_cycle.amount) - outstanding_balance ) );
-                    // $("#payoffamount").val(Number(data.payment_cycle.amount));
-                    $("#payoff-payment-cycle-id").val(data.payment_cycle.id);
-        
+                      $("#payoff-payment-cycle-id").val(data.payment_cycle.id);
+          
+                  }
                 }
-              }
+                
+              // 
+             $(".transaction-submit-button").data("id",data.credit_line.id);
               
-            // }
+              if (data.transactions.length > 0 ) {
+                  var deposit, withdraw;
+                  $.each(data.transactions, function(i, t){
+                      if (t.option == "withdraw" ) {
+                          withdraw = appTools.numberToCurrency(Number(t.amount));
+                          deposit  = "";
+                      } else if (t.option == "deposit") {
+                         deposit = appTools.numberToCurrency(Number(t.amount));
+                         withdraw = "";
+                      }
+                    $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(t.created_at) + "</td><td>" 
+                                                      + withdraw + "</td><td>"+ deposit + "</td><td>"
+                                                      + appTools.numberToCurrency(t.remaining_balance) +"</td></tr>");
+                  })
+               }
 
-           /** Submit buttom **/
-           $(".transaction-submit-button").data("id",data.credit_line.id);
-          //   $("#line-credit-table-row").append("<tr><td>"+ data.credit_line.created_at 
-          //                                     + "</td><td>"+ data.credit_line.description +"</td><td>"
-          //                                     + data.credit_line.limit + "</td><td>"+ data.credit_line.balance + "</td><td>"
-          //                                     + data.credit_line.interest +"</td><td>"+ data.credit_line.number_of_days 
-          //                                     +"</td><td>Action" +"</td></tr>");
+            } //End of if (xhr.status == 200) block
 
-
-
-            if (data.transactions.length > 0 ) {
-                var deposit, withdraw;
-                $.each(data.transactions, function(i, t){
-                    if (t.option == "withdraw" ) {
-                        withdraw = appTools.numberToCurrency(Number(t.amount));
-                        deposit  = "";
-                    } else if (t.option == "deposit") {
-                       deposit = appTools.numberToCurrency(Number(t.amount));
-                       withdraw = "";
-                    }
-
-                  $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(t.created_at) + "</td><td>" 
-                                                    + withdraw + "</td><td>"+ deposit + "</td><td>"
-                                                    // + Number(t.interest).toFixed(2)+ "</td><td>"
-                                                    + appTools.numberToCurrency(t.remaining_balance) +"</td></tr>");
-                })
-            }
-
-          }
-
-
-            console.log("success");
           },
           error: function(xhr, status, error){
-            console.log("failed")
+              console.log(xhr.status);
+              console.log(error);
           }
         });
 
@@ -216,6 +211,9 @@ function resetFormFields() {
    $( ".delete-credit-line").on("click",function(){
        $.ajax({
           url:"/api/v1/credit_lines/" + $(this).data("id"),
+          headers: {
+                'Authorization': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.mdhf3iJDUYR3BZLzuHzyCrUn_DZqKBN35jzJxb1hjAI"
+              },
           data:{
             "user_id": 2
           },

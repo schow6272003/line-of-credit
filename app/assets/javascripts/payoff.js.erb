@@ -4,10 +4,10 @@ $(document).ready( function() {
   $("#payoff-submit").on("click", function(){
         $.ajax({
           url:"/api/v1/payment_cycles/" + $("#payoff-payment-cycle-id").val(),
+         headers: {
+                'Authorization': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.mdhf3iJDUYR3BZLzuHzyCrUn_DZqKBN35jzJxb1hjAI"
+              },
           method: "put",
-          data:{
-            "user_id": 2
-          },
           dataType:"json",
           success: function(data, textStatus, xhr){
             console.log("success");
