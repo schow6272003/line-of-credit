@@ -1,0 +1,86 @@
+$(document).ready( function() {
+
+
+
+   $("#login-submit-button").on("click", function(){
+      $("#invalid-login-alert").hide();
+    });
+
+  $( "#log-in-form" ).validate({
+    rules: {
+      logInPassword: {
+        required: true, 
+        minlength: 6
+      },
+      logInEmail: {
+            required: true,
+            email: true,
+            checkExistingEmail: function () {
+               return { option: "email"}
+            }
+         }
+       },
+       submitHandler: function(form, event) {
+        $("#invalid-login-alert").hide();
+          $.ajax({
+              url:"/api/v1/sessions",
+              method: "post",
+              data: { 
+                session: {
+                  email: $("#logInEmail").val(),
+                  password: $("#logInPassword").val(),
+                }
+              },
+              dataType:"json",
+              success: function(jwt, textStatus, xhr){
+
+                console.log(jwt);
+                console.log(xhr.status)
+                if (xhr.status == 201) {
+                  window.location.replace("/credit_lines");
+                } else {
+                   $("#invalid-login-alert").show();
+                  $("#invalid-login-alert").text("Invalid email/password combination");
+                }
+              },
+              error: function(xhr, status, error){
+                 $("#invalid-login-alert").show();
+                  $("#invalid-login-alert").text(xhr.responseJSON.error);
+         
+              }
+            }); 
+       }
+  });
+
+
+
+    // Validate Email Remote Check
+    $.validator.addMethod("checkExistingEmail", function (value, element, options)
+     {  
+
+       var email = value;
+       var response;
+        $.ajax({
+            type: "POST",
+            url: "/api/v1/users/check_existed_email",
+            data: {
+                   email: function() {
+                      return email ;
+                   }
+                  },
+            async:false,
+            success:function(data){
+                response = data.switch;
+            }
+        });
+
+        (response) ?  $(element).removeClass('error') : $(element).addClass('error') ;
+        //(response) ?  $(element).addClass('error') : $(element).removeClass('error') ;
+        return response;
+      },
+       "That email address does not exist!"
+    );
+
+
+
+});

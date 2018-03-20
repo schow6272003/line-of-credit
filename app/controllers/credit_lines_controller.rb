@@ -1,15 +1,7 @@
 class CreditLinesController < ApplicationController
-
+  before_action :authenticate_user!, only: [:index]
+  
   def index
-    render json: CreditLine.all
-  end
-
-  def create
-  end
-
-  def update
-  end
-
-  def delete
+    @credit_lines = @current_user.credit_lines 
   end
 end

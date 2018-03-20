@@ -1,0 +1,36 @@
+$(document).ready( function() {
+
+
+
+ $("#user-sign-out-link").on("click", function() {
+        console.log("sign up")
+            $.ajax({
+              url:"/api/v1/sessions/user_id",
+              method: "delete",
+              dataType:"json",
+              success: function(jwt, textStatus, xhr){
+                 console.log("log in")
+                 console.log(xhr.status)
+                  if (xhr.status == 204) {
+                      window.location.replace("/");
+                  } else {
+                      console.log("unable to log out session")
+                  }
+              },
+              error: function(xhr, status, error){
+
+                 console.log("failure");
+                 console.log(xhr);
+                 console.log(status);
+                 console.log(error);
+                 console.log("unable to log out session");
+
+             
+              }
+            }); 
+   }); 
+
+
+ 
+
+});

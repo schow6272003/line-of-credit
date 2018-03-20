@@ -1,8 +1,8 @@
 module Api
   module V1
       class CreditLinesController  < ApplicationController
+        include CreditLineHelper
         require "date"
-
         before_action :authenticate_request!
 
         def index
@@ -11,8 +11,10 @@ module Api
 
         def show
           @credit_line = CreditLine.includes(:payment_cycles, :transactions).find(params[:id])
+
+
           if @credit_line
-            current_date = Time.now
+            check_payment_due_day(@credit_line)
             render json: {"credit_line" => @credit_line, "payment_cycle" => @credit_line.payment_cycles.last, "transactions" => @credit_line.transactions}, status: 200
           else 
             render json: @credit_line.errors, status: :unprocessable_entit
@@ -20,7 +22,7 @@ module Api
         end 
 
         def create
-          credit_line =  CreditLine.new(credit_line_params)
+          credit_line = @current_user.credit_lines.build(credit_line_params)
           if credit_line.save
             render json: credit_line, status: 201
           else
@@ -40,7 +42,7 @@ module Api
 
         private
          def credit_line_params
-          params.permit(:user_id, :description, :limit, :balance, :interest, :number_of_days)
+          params.permit(:description, :limit, :balance, :interest, :number_of_days)
          end
       end
   end

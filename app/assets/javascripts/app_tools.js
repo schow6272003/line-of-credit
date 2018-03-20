@@ -1,4 +1,10 @@
 var appTools = {
+    setCookie: function(cname, cvalue, exdays, path) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/" + path;
+    },
     findAllCreditLines: function(user_id, callback) {
       $.ajax({
         url:"/api/v1/credit_lines",

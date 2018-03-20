@@ -1,17 +1,31 @@
 module Api
   module V1
       class UsersController  < ApplicationController
-        
+        include SessionsHelper
+
+       def check_email
+         user = User.find_by_email(params[:email])
+         render json: { "switch" => !user }, status: 200
+       end 
+
+       def check_existed_email
+         user = User.find_by_email(params[:email])
+         render json: { "switch" => !user.blank? }, status: 200
+       end 
+
+
        def create
-        user = User.new(user_params)
-        if user.save
-          render json: user, status: 201
-        else  
-          render json: { errors: user.errors }, status: :unprocessable_entit
-        end 
+           user = User.new(user_params)
+          if user.save
+            user_id = JsonWebToken.encode({ user_id: user.id })
+            login user_id
+
+            render json:  { "token" => user_id}, status: 201
+          else  
+            render json: { errors: user.errors }, status: :unprocessable_entit
+          end 
        end 
        
-
        def update
           user = User.find(params[:id])
 
@@ -29,19 +43,11 @@ module Api
           head 204
        end
 
-       def confirm
-       end
-
-       def login
-       end
-
-
-
 
        private
 
         def user_params
-          params.require(:user).permit(:email, :password, :password_confirmation)
+          params.require(:user).permit(:full_name, :email, :password, :password_confirmation)
         end
 
       end

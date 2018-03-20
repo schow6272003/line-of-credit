@@ -1,0 +1,51 @@
+header, footer {
+  background-color: #00bdf2;
+}
+
+
+footer {
+    background-color: #00bdf2;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    text-align: center;
+    height: 60px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 27%;
+    float: right;
+    border-color: 1px solid black;
+}
+
+nav ul li {
+    float: left;
+}
+
+
+nav ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+  background-color: #004b8b;
+  cursor: pointer;
+   color: white;
+}
+
+
+nav ul li a:active {
+  background-color: #004b8b;
+  cursor: pointer;
+   color: white;
+}

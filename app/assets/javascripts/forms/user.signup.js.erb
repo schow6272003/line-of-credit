@@ -1,0 +1,82 @@
+$(document).ready( function() {
+
+
+ /***************** Validation ************************/
+  $( "#new-user-registration" ).validate({
+    rules: {
+      signUpUserPassword: "required",
+      signUpUserEmail: {
+        required: true,
+        email: true,
+        remoteEmailCheck: function () {
+           return { option: "email"}
+        }
+      },
+      signUpUserConfirmPassword: {
+                required: true,
+                 equalTo: "#signUpUserPassword"
+              }
+           },
+        submitHandler: function(form) {
+            $.ajax({
+              url:"/api/v1/users",
+              method: "post",
+              data: { 
+                user: {
+                  full_name: $("#signUpUserFullName").val(),
+                  email: $("#signUpUserEmail").val(),
+                  password: $("#signUpUserPassword").val(),
+                  password_confirmation: $("#signUpUserConfirmPassword").val()
+                }
+              },
+              dataType:"json",
+              success: function(jwt, textStatus, xhr){
+                if (xhr.status == 201) {
+                  window.location.replace("/credit_lines");
+                }
+              },
+              error: function(xhr, status, error){
+
+                 console.log("failure");
+                 console.log(xhr);
+                 console.log(status);
+                 console.log(error);
+
+             
+              }
+            }); 
+
+
+        }
+  });
+ /***************** Validation ************************/
+
+
+      // Validate Email Remote Check
+      $.validator.addMethod("remoteEmailCheck", function (value, element, options)
+       {  
+         var email = value;
+         var response;
+          $.ajax({
+              type: "POST",
+              url: "/api/v1/users/check_email",
+              data: {
+                     email: function() {
+                        return email ;
+                     }
+                    },
+              async:false,
+              success:function(data){
+                  response = data.switch;
+
+              }
+          });
+
+          (response) ? $(element).removeClass('error') : $(element).addClass('error');
+          return response;
+        },
+         "That email address is taken. Try another."
+      );
+
+
+});

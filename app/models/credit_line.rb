@@ -13,6 +13,11 @@ class CreditLine < ApplicationRecord
 
   attr_accessor :skip_limit_number_of_days_validation, :skip_balance_validation
 
+  def self.with_transactions
+    includes(:transactions).where.not(:transactions=> { :id => nil })
+  end 
+
+ 
  private
 
   def initialize_default_values

@@ -1,0 +1,7 @@
+label.error { 
+  color: red; 
+}
+
+#invalid-login-alert {
+  display: none;
+}

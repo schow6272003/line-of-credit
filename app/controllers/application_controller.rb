@@ -1,16 +1,24 @@
 class ApplicationController < ActionController::Base
     protect_from_forgery with: :null_session
-
+    include SessionsHelper
 
 
   protected
+
+      def authenticate_user!
+         jtw_token = JsonWebToken.decode(session[:user_id]) 
+         user_id = jtw_token["user_id"] unless jtw_token.blank?
+         @current_user ||= User.find_by(id: user_id)
+         redirect_to root_path if @current_user.blank?
+      end 
+
       def authenticate_request!
         if !payload 
           return invalid_authentication
         end
 
-        @current_user = User.find_by(id: payload['user_id'])
-        invalid_authentication unless @current_user
+        @current_user = User.find_by(id: payload['user_id']) 
+        invalid_authentication if @current_user.blank?
       end
 
       def invalid_authentication
@@ -25,4 +33,5 @@ class ApplicationController < ActionController::Base
       rescue
         nil
       end
+
 end

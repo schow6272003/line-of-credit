@@ -12,7 +12,7 @@ $(document).ready( function() {
         $.ajax({
           url:"/api/v1/transactions",
           headers: {
-                  'Authorization': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.mdhf3iJDUYR3BZLzuHzyCrUn_DZqKBN35jzJxb1hjAI"
+                  'Authorization':  $("#session_id").data("id")
                 },
           method: "post",
           data:{
@@ -34,10 +34,10 @@ $(document).ready( function() {
 
                 $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(Transaction.created_at) 
                                                     + "</td><td>" + withdraw + "</td><td>"+ deposit + "</td><td>"
-                                                    + Transaction.remaining_balance +"</td></tr>");
+                                                    + appTools.numberToCurrency(Transaction.remaining_balance) +"</td></tr>");
 
 
-            $("#credit-line-credit-balance").text("$" + Transaction.remaining_balance);
+            $("#credit-line-credit-balance").text(appTools.numberToCurrency(Transaction.remaining_balance));
           }
 
           $("#transaction-amount-input").val("");
@@ -61,13 +61,14 @@ $(document).ready( function() {
 
 
     $("#create-credit-line").on("click",function(e){
+
       $("#creditLineEditInvestorFormModal").modal("hide");
 
         e.preventDefault();
         $.ajax({
           url:"/api/v1/credit_lines",
           headers: {
-                'Authorization': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.mdhf3iJDUYR3BZLzuHzyCrUn_DZqKBN35jzJxb1hjAI"
+                'Authorization': $("#session_id").data("id")
               },
           data:{
             "limit": $("#creditLineLimit").val(),
@@ -115,13 +116,14 @@ function resetFormFields() {
   /***************** Access Credit Line *****************/
 
   $(".access-to-credit-line").on("click",function(){
+      console.log("------ access-to-credit-line")
      $("#transactions-table-row").empty();
 
         $.ajax({
           url:" /api/v1/credit_lines/" + $(this).data("id"),
           method: "get",
           headers: {
-            'Authorization': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.mdhf3iJDUYR3BZLzuHzyCrUn_DZqKBN35jzJxb1hjAI"
+            'Authorization': $("#session_id").data("id")
           },
           dataType:"json",
           success: function(data, textStatus, xhr){
@@ -138,10 +140,12 @@ function resetFormFields() {
               $("#credit-line-credit-balance").text(appTools.numberToCurrency(data.credit_line.balance));
               $("#credit-line-credit-arp").text(data.credit_line.interest*100 + "%");
               $("#credit-line-credit-payment-period").text(data.credit_line.number_of_days);
+
    
                 if (data.payment_cycle) {
                   $("#credit-line-closing-date").text(appTools.formatDate(data.payment_cycle.close_date));
                   if (data.payment_cycle.paid == false){
+                     $("#payoff-form-table").show();
                       $(".payoff-reminder").show();
                       $("#transaction-form").hide();
                       $("#credit-line-due-date").text(appTools.formatDate(data.payment_cycle.close_date));
@@ -153,12 +157,13 @@ function resetFormFields() {
                       $("#credit-line-credit-total-payoff-interest").text( appTools.numberToCurrency( Number(data.payment_cycle.amount) - outstanding_balance ) );
 
                       $("#payoff-payment-cycle-id").val(data.payment_cycle.id);
-          
+                  } else {
+                    $("#payoff-form-table").hide();
                   }
                 }
                 
               // 
-             $(".transaction-submit-button").data("id",data.credit_line.id);
+             $(".transaction-submit-button").attr("data-creditlineid",data.credit_line.id);
               
               if (data.transactions.length > 0 ) {
                   var deposit, withdraw;
@@ -212,7 +217,7 @@ function resetFormFields() {
        $.ajax({
           url:"/api/v1/credit_lines/" + $(this).data("id"),
           headers: {
-                'Authorization': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyfQ.mdhf3iJDUYR3BZLzuHzyCrUn_DZqKBN35jzJxb1hjAI"
+                'Authorization': $("#session_id").data("id")
               },
           data:{
             "user_id": 2

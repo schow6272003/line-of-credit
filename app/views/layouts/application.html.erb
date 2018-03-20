@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>LineOfCredit</title>
+    <title>Line Of Credit</title>
     <%= csrf_meta_tags %>
-
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
   </head>
 
   <body>
-    <%= yield %>
+    <span id="session_id" data-id="<%= session[:user_id] %>"></span>
+    <%= render :partial => 'layouts/header' %>
+    <div class="container">
+      <%= yield %>
+    </div>
+    <%= render :partial => 'layouts/footer' %>  
   </body>
 </html>

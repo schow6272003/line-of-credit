@@ -4,16 +4,16 @@ module Api
 
         before_action :authenticate_request!
 
-        # def show
-        #   @credit_line = CreditLine.includes(:payment_cycles, :transactions).find(params[:id])
+        def show
+          @credit_line = CreditLine.includes(:payment_cycles, :transactions).find(params[:id])
 
-        #   if @credit_line
-        #      render json: { "status" => 200, "credit_line" => @credit_line}
-        #   else 
-        #     render json: @credit_line.errors, status: :unprocessable_entit
-        #   end
+          if @credit_line
+             render json: { "credit_line" => @credit_line}, status: 200
+          else 
+            render json: @credit_line.errors, status: :unprocessable_entit
+          end
 
-        # end 
+        end 
 
         def create
           transaction = Transaction.new(transaction_params)

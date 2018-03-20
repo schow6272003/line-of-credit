@@ -39,6 +39,8 @@ gem 'jbuilder', '~> 2.5'
 gem 'rack-cors'
 gem 'jwt'
 
+gem 'whenever', require: false
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.7'
   gem 'timecop'
