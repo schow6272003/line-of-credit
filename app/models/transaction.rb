@@ -6,8 +6,9 @@ class Transaction < ApplicationRecord
 
   before_create :set_outstanding_balance_on_transaction
   after_create :update_credit_line_balance
-  after_create :set_payment_cycle, if: :is_not_pay_off_amount?
-  after_create :set_payoff_amount, if: :is_not_pay_off_amount?
+  after_create :create_new_payment_cycle, if: :are_payment_cycles_blank?
+  # after_create :set_payment_cycle, if: :is_not_pay_off_amount?
+  # after_create :set_payoff_amount, if: :is_not_pay_off_amount?
 
 
 
@@ -47,7 +48,7 @@ class Transaction < ApplicationRecord
         if current_credit_line.payment_cycles.blank?
            create_new_payment_cycle
         else 
-          create_new_payment_cycle if current_payment_cylcle.close_date < self.created_at 
+          # create_new_payment_cycle if current_payment_cylcle.close_date < self.created_at 
         end 
     end  ## end of set_payment_cycle function 
 
@@ -83,16 +84,28 @@ class Transaction < ApplicationRecord
     def current_payment_cycle
       current_credit_line.payment_cycles.last
     end
-    def create_new_payment_cycle
-       begin_date = self.created_at
-       close_date = begin_date + current_credit_line.number_of_days.days
-       current_credit_line.payment_cycles.create(beginning_date:begin_date.to_date, close_date: close_date.to_date)
-    end  ## end of create_new_payment_cycle
 
+      #### ---- old version #####
+    # def create_new_payment_cycle
+    #    begin_date = self.created_at
+    #    close_date = begin_date + current_credit_line.number_of_days.days
+    #    current_credit_line.payment_cycles.create(beginning_date:begin_date.to_date, close_date: close_date.to_date, next_beginning_date: begin_date.to_date, next_close_date:close_date.to_date )
+    # end  ## end of create_new_payment_cycle
+
+
+    def create_new_payment_cycle
+       begin_date = self.created_at.to_date
+       close_date = begin_date + 29.days
+       current_credit_line.payment_cycles.create(beginning_date:begin_date, close_date: close_date, next_beginning_date: begin_date, next_close_date:close_date)
+    end 
 
     def interest_amount(days)
       current_credit_line.balance * current_credit_line.interest / 365 * days
     end 
+
+    def are_payment_cycles_blank?
+      current_credit_line.payment_cycles.blank?
+    end
 
     def is_not_pay_off_amount?
       !(self.option == "pay_off")

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180318014152) do
+ActiveRecord::Schema.define(version: 20180320061434) do
 
   create_table "credit_lines", force: :cascade do |t|
     t.integer "user_id"
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20180318014152) do
     t.datetime "updated_at", null: false
     t.boolean "paid"
     t.decimal "past_due_amount", precision: 12, scale: 2
-    t.decimal "current_amount", precision: 12, scale: 2
+    t.decimal "outstanding_amount", precision: 12, scale: 2
     t.float "accrued_interest"
     t.datetime "due_date"
     t.datetime "next_beginning_date"
