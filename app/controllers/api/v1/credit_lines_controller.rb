@@ -31,12 +31,12 @@ module Api
         end
 
         def destroy 
-        credit_line = CreditLine.find(params[:id])
+        credit_line = CreditLine.find_by_id(params[:id])
           if !credit_line.blank? 
             credit_line.destroy
             render json: credit_line.id, status: 200
           else
-            render json: credit_line.errors, status: :unprocessable_entit
+            render json:  {error: 'Invalid Request'}, status: :unprocessable_entit
           end
         end
 

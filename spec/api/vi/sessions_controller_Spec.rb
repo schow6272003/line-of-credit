@@ -14,11 +14,12 @@ describe Api::V1::SessionsController, type: :request do
         decodeHash = JsonWebToken.decode(session['user_id'])
         parsed_json_body = JSON(response.body)
         expect(user.id).to eq(decodeHash["user_id"])
-        expect(parsed_json_body["token"]).to eq(session['user_id'])
+        expect(parsed_json_body["user_id"]).to eq(session['user_id'])
         expect(response).to have_http_status :success
       end
 
       it "is destroyed" do
+        delete "/api/v1/sessions/" + user.id.to_s, params: {}, headers: headers
         expect(session['user_id']).to be_nil
         expect(response).to have_http_status :success
       end
