@@ -21,27 +21,37 @@
       <tr>
          <td colspan="2" style="text-align: center;">
           <form id="payoff-form">
-    <!--       <div class="form-check" >
-            <input class="form-check-input" type="radio" name="payoff" id="payoff-full" value="full" checked>
-            <label class="form-check-label" for="payoff-full">
-               Pay In Full
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="payoff" id="payoff-different" value="different">
-            <label class="form-check-label" for="payoff-different">
-              Pay Different Amount:  <input id="payoff-different-amount" type="text" />
-            </label>
-          </div> -->
             <input type="hidden" id="payoff-payment-cycle-id" value>
-            <!-- <input type="hidden" id="payoffamount" value> -->
             <button id="payoff-submit" type="button" class="btn btn-warning mb-2" >Make Payment</button>
           </form>
           </td>
       </tr>
-
     </table>
  </div> 
-<div id="no-payment-due-reminder" class="alert alert-info">
-    No payment is due this time
+
+<div id="payment-receipt-alert" class="alert alert-success">
+    Your payment has successfully been received.
 </div>
+
+<div id="no-payment-due-reminder" class="alert alert-info">
+    No payment is due this time.
+</div>
+
+<hr>
+<div id="payment-history-block">
+  <div style="text-align: center;"> <b><u>Payment History</u></b> </div>
+  <table class="table table-custum">
+    <thead>
+      <tr>
+       <th>Payment Period</th>
+       <th>Due Date</th>
+       <th>Receipt Date</th>
+       <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody id="pay-off-receipt-table-row">
+    </tbody>
+  </table>
+</div>
+
+

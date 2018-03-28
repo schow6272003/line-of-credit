@@ -49,3 +49,41 @@ nav ul li a:active {
   cursor: pointer;
    color: white;
 }
+
+.main-body  {
+    height: 500px;
+    width: 100%;
+   background-image: image-url("city-of-la-final-2.jpg");
+   background-repeat: no-repeat;
+   background-size: 100% 100%;
+}
+
+.custom-button {
+  border-radius: 21px;
+    font-family: "Montserrat";
+    letter-spacing: 3px;
+    font-weight: 700;
+    font-size: 0.8em;
+    background-color: #FFC80A;
+    color: black;
+    display: block;
+    width: fit-content;
+    padding: 13px 26px;
+    margin: 0 auto;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.custom-button.hover {
+   cursor: pointer;
+}
+
+#home-url-link {
+  text-decoration: none;
+  color: #fff;
+}
+
+#home-url-link:hover {
+  cursor: pointer;
+}

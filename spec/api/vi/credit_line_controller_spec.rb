@@ -12,10 +12,8 @@ describe Api::V1::CreditLinesController, type: :request do
        user.credit_lines.create(limit: 20000, interest: 0.25, balance: 20000, number_of_days: 30)
     end
 
-
-    context "Index" do 
-
-      it "display list with valid token" do
+    context "Index Action" do 
+      it "displays list with valid token" do
         get "/api/v1/credit_lines", params: { }, headers: token_headers
         parsed_json_body = JSON(response.body)
         expect(parsed_json_body.size).to eq(2)
@@ -30,8 +28,8 @@ describe Api::V1::CreditLinesController, type: :request do
       end
     end
 
-    context "Show" do 
-      it "display list with valid token" do
+    context "Show Action" do 
+      it "displays credit line with valid token" do
         get "/api/v1/credit_lines/" + CreditLine.first.id.to_s, params: { }, headers: token_headers
         parsed_json_body = JSON(response.body)
 
@@ -49,8 +47,8 @@ describe Api::V1::CreditLinesController, type: :request do
       end
     end
 
-    context "Delete" do 
-      it "with valid token" do
+    context "Delete Action" do 
+      it "delete with valid token" do
         delete "/api/v1/credit_lines/" + CreditLine.first.id.to_s, params: { }, headers: token_headers
         expect(response).to have_http_status :success
       end

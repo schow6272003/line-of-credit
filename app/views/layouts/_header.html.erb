@@ -5,19 +5,19 @@
 
         <nav>
           <div style="width: 50%; color: #fff; float: left;">
-            <h4>Line of Credit</h4>
+            <h4><%= link_to "Line Of Credit", root_path, id: "home-url-link" %></h4>
           </div>
           <ul>
             <% if is_logged_in? %>
               <li></li>
               <li></li>
-              <li><%= link_to "My Credits", credit_lines_path %></li>
+              <li><%= link_to "My Credits", credit_lines_path, :onclick => "window.location.replace('/credit_lines')"  %></li>
               <li><%= link_to "Sign Out", "", id: "user-sign-out-link", data: { userid: 1}%></li>
             <% else %>
               <li></li>
               <li></li>
-              <li><%= link_to "Sign In", login_users_path %></li>
-              <li><%= link_to "Sign Up",  new_user_path %></li>
+              <li><%= link_to "Sign In", login_users_path, :onclick => "window.location.replace('/users/login')" %></li>
+              <li><%= link_to "Sign Up",  new_user_path, :onclick => "window.location.replace('/users/new')" %></li>
             <% end %>
           </ul>
         </nav>

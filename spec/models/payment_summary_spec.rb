@@ -8,9 +8,11 @@ describe PaymentSummary do
   let(:credit_line) { 
     CreditLine.create(user_id: user.id, limit: 1000, balance: 1000, number_of_days: 30, interest: 35, description: "Credit Line")
   }
-  subject { PaymentSummary.new }
+  let(:credit_line1) { 
+    CreditLine.create(user_id: user.id, limit: 2000, balance: 2000, number_of_days: 30, interest: 35, description: "Credit Line", created_at:  Date.new(2018,1,15).to_date)
+  }
 
-
+  
   it "creates user" do
     expect(user.email).to eq("test@gmail.com")
   end 
@@ -103,7 +105,7 @@ describe PaymentSummary do
   end 
 
 
-  it "process paid due payment " do
+  it "process due payment" do
     Timecop.freeze(Time.now.to_date) do 
       credit_line.transactions.create(option: :withdraw, amount: 500)
     end 
@@ -133,7 +135,7 @@ describe PaymentSummary do
   end 
 
 
-  it "process paid due payment but made purchase after ward" do
+  it "process due payment but made purchase afterward" do
     Timecop.freeze(Time.now.to_date) do 
       credit_line.transactions.create(option: :withdraw, amount: 300)
     end 

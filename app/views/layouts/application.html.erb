@@ -11,9 +11,19 @@
   <body>
     <span id="session_id" data-id="<%= session[:user_id] %>"></span>
     <%= render :partial => 'layouts/header' %>
-    <div class="container">
-      <%= yield %>
-    </div>
+
+    <%  if current_page?(controller: 'pages', action: 'index')%>
+     <div  class="main-body" >
+        <div class="container">
+          <%= yield %>
+        </div>
+     </div>
+     <% else %>
+        <div class="container">
+          <%= yield %>
+        </div>
+      <% end %>
+
     <%= render :partial => 'layouts/footer' %>  
   </body>
 </html>

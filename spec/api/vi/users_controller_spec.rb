@@ -12,7 +12,7 @@ describe Api::V1::UsersController, type: :request do
     let(:headers) { {'ACCEPT' => 'application/json'} }
 
   context "Register New User" do
-      it "create valid user" do 
+      it "creates valid user" do 
         post "/api/v1/users", params: params, headers: headers
 
         user_id =  User.last.id
@@ -50,14 +50,14 @@ describe Api::V1::UsersController, type: :request do
 
 
    context "Email" do
-      it "is a registed email" do
+      it "is a registered email" do
         p user.email
         post "/api/v1/users/check_email", params: { email: "test@gmail.com"} , headers: headers
         parsed_json_body = JSON(response.body)
         expect(parsed_json_body["switch"]).to eq(false)
         expect(response).to have_http_status :success
       end
-      it "is a not registed email" do 
+      it "is a not registered email" do 
         p user.email
         post "/api/v1/users/check_email", params: { email: "test232329993@gmail.com"} , headers: headers
         parsed_json_body = JSON(response.body)
@@ -73,7 +73,7 @@ describe Api::V1::UsersController, type: :request do
         expect(parsed_json_body["switch"]).to eq(true)
         expect(response).to have_http_status :success
       end
-      it " does not exist" do 
+      it "does not exist" do 
         p user.email
         post "/api/v1/users/check_existed_email", params: { email: "test232323@gmail.com"} , headers: headers
         parsed_json_body = JSON(response.body)

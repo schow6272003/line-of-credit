@@ -1,9 +1,7 @@
 $(document).ready( function() {
 
 
-
  $("#user-sign-out-link").on("click", function() {
-        console.log("sign up")
             $.ajax({
               url:"/api/v1/sessions/user_id",
               method: "delete",
@@ -29,8 +27,4 @@ $(document).ready( function() {
               }
             }); 
    }); 
-
-
- 
-
 });

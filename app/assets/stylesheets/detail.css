@@ -1,14 +1,3 @@
-/*#credit-line-detail-block{
-  display: none;
-}*/
-
-/*#credit-line-detail-crumb-block{
-   display: none;
-}*/
-/*#return-to-credit-line-main{
-
-}*/
-
 #return-to-credit-line-main:hover{
   cursor: pointer;
 };
@@ -31,3 +20,8 @@ table.table-custum  tr  td {
 #session_id {
   display: none;
 }
+
+#payment-receipt-alert {
+  display: none;
+}
+

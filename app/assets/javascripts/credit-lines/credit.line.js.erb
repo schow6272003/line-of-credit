@@ -1,0 +1,144 @@
+$(document).ready( function() {
+  if ($(".access-to-credit-line").length == 0) {
+    return false
+  }
+
+  /***************** Access Credit Line *****************/
+  $(".access-to-credit-line").on("click",function(){
+     $("#transactions-table-row").empty();
+        $.ajax({
+          url:" /api/v1/credit_lines/" + $(this).data("id"),
+          method: "get",
+          headers: {
+            'Authorization': $("#session_id").data("id")
+          },
+          dataType:"json",
+          success: function(data, textStatus, xhr){
+            if (xhr.status == 200) {
+              $("#line-credit-main-table").hide();
+              $("#open-new-credit-line-modal").hide();
+              $("#credit-line-detail-crumb-block").fadeIn();
+              $("#credit-line-detail-block").fadeIn();
+             
+              $("#credit-line-credit-date").text( appTools.formatDate(data.credit_line.created_at));
+              $("#credit-line-credit-description").text(data.credit_line.description);
+              $("#credit-line-description").text(data.credit_line.description);
+              $("#credit-line-credit-limit").text(appTools.numberToCurrency(data.credit_line.limit));
+              $("#credit-line-credit-balance").text(appTools.numberToCurrency(data.credit_line.balance));
+              $("#credit-line-credit-balance-transaction").val(data.credit_line.balance);
+              $("#credit-line-credit-arp").text(data.credit_line.interest*100 + "%");
+              $("#credit-line-credit-payment-period").text(data.credit_line.number_of_days);
+
+                if (data.payment_cycles.length > 0) {
+                  var payOffTransaction;
+                  var lastPaymentCycle = data.payment_cycles[data.payment_cycles.length - 1];
+                  var transactions = data.transactions;
+
+
+                   if (lastPaymentCycle.paid == false){
+                     $("#no-payment-due-reminder").hide();
+                     $("#payoff-form-table").show();
+                      $(".payoff-reminder").show();
+                      $("#transaction-form").hide();
+                      $("#credit-line-due-date").text(appTools.formatDate(lastPaymentCycle.due_date));
+
+                       var dueDate = new Date(lastPaymentCycle.due_date);
+                       var currentDate =  new Date();
+                       if (currentDate > dueDate) {
+                          $("#transaction-form").hide();
+                          $(".payoff-reminder").show();
+                       }
+
+                      $("#payment-due-date").text(appTools.formatDate(lastPaymentCycle.due_date));
+                      
+                      $("#credit-line-outstanding-balance").text(appTools.numberToCurrency(lastPaymentCycle.outstanding_amount));
+                      $("#credit-line-credit-total-payoff-interest").text( appTools.numberToCurrency( Number(lastPaymentCycle.accrued_interest)) );
+                      $("#credit-line-total-payoff-balance").text(appTools.numberToCurrency(Number(lastPaymentCycle.outstanding_amount) + Number(lastPaymentCycle.accrued_interest)));
+                      $("#payoff-payment-cycle-id").val(lastPaymentCycle.id);
+                   } else {
+                     $("#payoff-form-table").hide();
+                     $("#no-payment-due-reminder").show();
+                   }
+                   $.each(data.payment_cycles, function(key, payment_cycle){
+                       payOffTransacition = transactions.filter(t => t.id == payment_cycle.pay_off_transaction_id);
+                       if (payOffTransacition.length > 0) {
+                        $("#pay-off-receipt-table-row").append("<tr><td>" + appTools.formatDate(payment_cycle.beginning_date) + " To " + appTools.formatDate(payment_cycle.close_date)
+                              + "</td><td>" + appTools.formatDate(payment_cycle.due_date)  + "</td><td>" +  appTools.formatDate(payOffTransacition[0].created_at)  + "</td><td>" 
+                              +  appTools.numberToCurrency(payOffTransacition[0].amount) + "</td></tr>");
+                       }
+                   })
+
+                } else {
+                   $("#payoff-form-table").hide();
+                }
+ 
+             $(".transaction-submit-button").attr("data-creditlineid",data.credit_line.id);
+              
+              if (data.transactions.length > 0 ) {
+                  var deposit, withdraw;
+                  $.each(data.transactions, function(i, t){
+                      if (t.option == "withdraw" ) {
+                          withdraw = appTools.numberToCurrency(Number(t.amount));
+                          deposit  = "";
+                      } else if (t.option == "deposit") {
+                         deposit = appTools.numberToCurrency(Number(t.amount));
+                         withdraw = "";
+                      }
+                     $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(t.created_at) + "</td><td>" 
+                                                       + withdraw + "</td><td>"+ deposit + "</td><td>"
+                                                     + appTools.numberToCurrency(t.remaining_balance) +"</td></tr>");
+                  })
+               }
+
+            } //End of if (xhr.status == 200) block
+
+          },
+          error: function(xhr, status, error){
+              console.log(xhr.status);
+              console.log(error);
+          }
+        });
+  })
+
+  $("#return-to-credit-line-main").on("click",function(){
+    $("#line-credit-main-table").fadeIn();
+    $("#open-new-credit-line-modal").fadeIn();
+    $("#credit-line-detail-crumb-block").hide();
+    $("#credit-line-detail-block").hide();
+    $("#transactions-table-row").empty();
+    $('.nav-tabs a[href="#summary"]').tab('show');
+    $("#credit-line-due-date").text("");
+    $("#credit-line-credit-total-payoff-interest").text("");
+    $("#credit-line-outstanding-balance").text("");
+    $("#payoff-payment-cycle-id").text("");
+  })
+
+  /***************** Access Credit Line *****************/
+
+  /***************** Delete Credit Line *****************/
+   $( ".delete-credit-line").on("click",function(){
+       $.ajax({
+          url:"/api/v1/credit_lines/" + $(this).data("id"),
+          headers: {
+                'Authorization': $("#session_id").data("id")
+              },
+          data:{
+            "user_id": 2
+          },
+          method: "delete",
+          dataType:"json",
+          success: function(creditLineId, textStatus, xhr){
+            if (xhr.status == 200) {
+              $("#credit-line-"+ creditLineId).remove();
+            }
+
+          },
+          error: function(xhr, status, error){
+            console.log("failed")
+          } 
+        });
+    })
+  /***************** Delete Credit Line *****************/
+
+
+});

@@ -11,11 +11,8 @@ module Api
 
         def show
           @credit_line = CreditLine.includes(:payment_cycles, :transactions).find(params[:id])
-
-
           if @credit_line
-            check_payment_due_day(@credit_line)
-            render json: {"credit_line" => @credit_line, "payment_cycle" => @credit_line.payment_cycles.last, "transactions" => @credit_line.transactions}, status: 200
+            render json: {"credit_line" => @credit_line, "payment_cycles" => @credit_line.payment_cycles, "transactions" => @credit_line.transactions}, status: 200
           else 
             render json: @credit_line.errors, status: :unprocessable_entit
           end
@@ -31,7 +28,7 @@ module Api
         end
 
         def destroy 
-        credit_line = CreditLine.find_by_id(params[:id])
+          credit_line = CreditLine.find_by_id(params[:id])
           if !credit_line.blank? 
             credit_line.destroy
             render json: credit_line.id, status: 200

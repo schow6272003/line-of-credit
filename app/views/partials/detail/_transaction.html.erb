@@ -2,20 +2,20 @@
 <form id="transaction-form">
   <div class="form-row">
      <div class="col-md-7 mb-3">
-      <label for="transaction-amount-input">Make Transaction</label>
+      <label for="transaction-amount-input">Amount</label>
       <input type="text" id="transaction-amount-input" >
     </div>
     <div class="col-md-4 mb-3">
-      <button id="transaction-withdraw-button" type="button" class="btn btn-primary mb-2 transaction-submit-button" data-option="withdraw" data-creditline>Withdraw</button>
+      <input id="credit-line-credit-balance-transaction" type="hidden" value="" >
+      <button id="transaction-withdraw-button" type="button" class="btn btn-primary mb-2 transaction-submit-button" data-option="withdraw" data-creditlineid>Withdraw</button>
       <button id="transaction-deposit-button" type="button" class="btn btn-warning mb-2 transaction-submit-button" data-option="deposit" data-creditlineid>Payment</button>
     </div>
   </div>
 </form>
 <div class="alert alert-danger payoff-reminder">
-    Your payment is due on <span id="payment-due-date"></span>. Please make payment.
+    Your payment is past due. Please make payment.
 </div>
 <div class="payoff-reminder" >
     <button  id="make-payment-button" type="button" class="btn btn-warning mb-2">Make Payment</button>
 </div>
-
 

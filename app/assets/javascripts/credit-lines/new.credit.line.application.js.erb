@@ -1,0 +1,63 @@
+$(document).ready( function() {
+
+if ($("#creditLineForm").length === 0 ) {
+   return false;
+}
+
+ $("#open-new-credit-line-modal").on("click", function(){
+    $("#creditLineEditInvestorFormModal").modal();
+ }) 
+
+ $("#creditLineEditInvestorFormModal").on("hidden.bs.modal", function () {
+    $("#creditLineLimit").val("");
+    $("#creditLineLimit-error").hide();
+  });
+
+  $( "#creditLineForm" ).validate({
+                          rules: {
+                                creditLineLimit: {
+                                  required: true, 
+                                  range: [1000, 25000]
+                                }
+                             },
+                             messages: {
+                                  creditLineLimit: {
+                                    range: "Please enter an amount between $1,000.00 and $25,000.00"
+                                  }
+                               },
+                           submitHandler: function(form, event) {
+                              $("#creditLineEditInvestorFormModal").modal("hide");
+                                 event.preventDefault();
+                                    $.ajax({
+                                        url:"/api/v1/credit_lines",
+                                        headers: {
+                                                'Authorization':  $("#session_id").data("id")
+                                        },
+                                        data:{
+                                          "limit": $("#creditLineLimit").val(),
+                                          "balance": $("#creditLineLimit").val(), 
+                                          "number_of_days": $("#numberOfDays").val(),
+                                          "description": $("#description").val(),
+                                          "interest":$("#arp").val()
+                                        },
+                                        method: "post",
+                                        dataType:"json",
+                                        success: function(creditLine, textStatus, xhr){
+                                            if (xhr.status == 201) {
+                                           $("tbody#line-credit-table-row").append("<tr><td>"+ appTools.formatDate(creditLine.created_at) 
+                                                                    + "</td><td>"+ creditLine.description +"</td><td>"
+                                                                    + appTools.numberToCurrency(creditLine.limit) + "</td><td>"+ appTools.numberToCurrency(creditLine.balance) + "</td><td>"
+                                                                    + creditLine.interest*100 + "%" +"</td><td>"+ creditLine.number_of_days + " Days"
+                                                                   +  "</td><td>" + '<span style=" display: block; float: left;"><button id="access-to-credit-line"  data-id="'+ creditLine.id +'"  type="button" class="btn btn-info access-to-credit-line">access</button></span><span style="display: block; float: right;"><button id="delete-credit-line" data-id="'+ creditLine.id +'" type="button" class="btn btn-danger delete-credit-line">Cancel</button></span>' +"</td></tr>");
+                                             }
+                                            window.location.replace("/credit_lines");
+                                        },
+                                        error: function(xhr, status, error){
+                                            window.location.replace("/credit_lines");
+                                          console.log("failed")
+                                        }
+                                      });  
+                           }
+                        });
+
+});

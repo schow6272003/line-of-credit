@@ -1,5 +1,13 @@
 $(document).ready( function() {
 
+ if ( $("#make-payment-button").length == 0) {
+  return false;
+ }
+
+
+ $("#make-payment-button").on("click", function(){
+   $('.nav-tabs a[href="#bill"]').tab('show');
+ });
 
   $("#payoff-submit").on("click", function(){
         $.ajax({
@@ -10,17 +18,34 @@ $(document).ready( function() {
           method: "put",
           dataType:"json",
           success: function(data, textStatus, xhr){
-            console.log("success");
-            console.log(data)
+            if (xhr.status == 201) {
+
+                $("#credit-line-due-date").text("");
+                $("#credit-line-credit-total-payoff-interest").text("");
+                $("#credit-line-outstanding-balance").text("");
+                $("#credit-line-total-payoff-balance").text("");
+                $("#transaction-form").show();
+                $(".payoff-reminder").hide();
+
+              $("#payoff-form-table").fadeOut(500, function(){
+
+                 $("#payment-receipt-alert").fadeIn(1000, function(){
+                    $(this).fadeOut(2000, function(){
+                       $("#no-payment-due-reminder").fadeIn(500);
+                    });
+                 })
+              })
+
+              $("#pay-off-receipt-table-row").append("<tr><td>" + appTools.formatDate(data.payment_cycle.beginning_date) + " To " + appTools.formatDate(data.payment_cycle.close_date)
+                      + "</td><td>" + appTools.formatDate(data.payment_cycle.due_date)  + "</td><td>" +  appTools.formatDate(data.transaction.created_at)  + "</td><td>" 
+                      +  appTools.numberToCurrency(data.transaction.amount) + "</td></tr>");
+            }
           },
           error: function(xhr, status, error){
              console.log("failure");
          
           }
         }); 
-
   });
-
-
 
 });

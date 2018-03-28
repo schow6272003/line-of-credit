@@ -1,7 +1,7 @@
 module Api
   module V1
       class UsersController  < ApplicationController
-        include SessionsHelper
+       include SessionsHelper
 
        def check_email
          user = User.find_by_email(params[:email])
@@ -15,11 +15,10 @@ module Api
 
 
        def create
-           user = User.new(user_params)
+          user = User.new(user_params)
           if user.save
             user_id = JsonWebToken.encode({ user_id: user.id })
             login user_id
-
             render json:  { "token" => user_id}, status: 201
           else  
             render json: { errors: user.errors }, status: :unprocessable_entit
@@ -28,7 +27,6 @@ module Api
        
        def update
           user = User.find(params[:id])
-
           if user.update(user_params)
             render json: user, status: 200
           else
@@ -36,16 +34,13 @@ module Api
           end
        end
 
-
        def destroy
           user = User.find(params[:id])
           user.destroy
           head 204
        end
 
-
        private
-
         def user_params
           params.require(:user).permit(:full_name, :email, :password, :password_confirmation)
         end

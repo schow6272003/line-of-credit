@@ -1,15 +1,13 @@
 class PaymentSummary
 
-   def initialize
-   end
-
+  def initialize
+  end
 
   def process
     credit_lines.each do |credit_line|
         last_payment_cycle = credit_line.payment_cycles.last 
         current_date = Time.now.to_date
         current_close_date = current_date - 1.days
-
         if last_payment_cycle.close_date == last_payment_cycle.next_close_date
             calculate_payoff_amount(last_payment_cycle.beginning_date, last_payment_cycle.close_date, credit_line)
             last_payment_cycle.paid = false
@@ -34,9 +32,7 @@ class PaymentSummary
                  last_payment_cycle.next_close_date = last_payment_cycle.next_close_date + 30.days
                  last_payment_cycle.save
                end
-
             end
-
         end 
     end
   end
@@ -47,11 +43,10 @@ private
       transactions = transactions_from_period(beginning_date, close_date, credit_line)
       total_interest = 0
       last_payment_cycle = credit_line.payment_cycles.last
-
       unless transactions.count == 0
         if beginning_date < transactions.first.created_at.to_date
            last_transaction = credit_line.transactions.where("id <  ? ", transactions.first.id ).last 
-           last_transaction_remaining_balance = (last_transaction) ? last_transaction.remaining_balance :  0
+           last_transaction_remaining_balance = (last_Ptransaction) ? last_transaction.remaining_balance :  0
           days_at_this_balance = (beginning_date.to_date..transactions.first.created_at.to_date).count.to_i - 1
           total_interest += (credit_line.limit - last_transaction_remaining_balance) * credit_line.interest / 365 * days_at_this_balance
         end 

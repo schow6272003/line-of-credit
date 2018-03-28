@@ -19,7 +19,7 @@
           <td><%=  number_to_currency(credit_line.balance.to_f, precision: 2) %></td>
           <td><%=  number_to_percentage(credit_line.interest.to_f * 100, precision: 0) %></td>
           <td><%= credit_line.number_of_days %> Days</td>
-          <td><span style=" display: block; float: left;"><button id="access-to-credit-line"  data-id="<%= credit_line.id %>"  type="button" class="btn btn-info access-to-credit-line">access</button></span><span style="display: block; float: right;"><button id="delete-credit-line" data-id="<%= credit_line.id %>" type="button" class="btn btn-danger delete-credit-line">Delete</button></span></td>
+          <td><span style=" display: block; float: left;"><button id="access-to-credit-line"  data-id="<%= credit_line.id %>"  type="button" class="btn btn-info access-to-credit-line">access</button></span><span style="display: block; float: right;"><button id="delete-credit-line" data-id="<%= credit_line.id %>" type="button" class="btn btn-danger delete-credit-line">Cancel</button></span></td>
         </tr>
       <% end %>
   </tbody>

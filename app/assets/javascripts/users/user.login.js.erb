@@ -1,10 +1,9 @@
 $(document).ready( function() {
 
 
-
-   $("#login-submit-button").on("click", function(){
-      $("#invalid-login-alert").hide();
-    });
+ $("#login-submit-button").on("click", function(){
+    $("#invalid-login-alert").hide();
+  });
 
   $( "#log-in-form" ).validate({
     rules: {
@@ -52,12 +51,8 @@ $(document).ready( function() {
        }
   });
 
-
-
     // Validate Email Remote Check
-    $.validator.addMethod("checkExistingEmail", function (value, element, options)
-     {  
-
+    $.validator.addMethod("checkExistingEmail", function (value, element, options) {  
        var email = value;
        var response;
         $.ajax({
@@ -80,7 +75,5 @@ $(document).ready( function() {
       },
        "That email address does not exist!"
     );
-
-
 
 });
