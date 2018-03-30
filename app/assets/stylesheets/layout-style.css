@@ -87,3 +87,9 @@ nav ul li a:active {
 #home-url-link:hover {
   cursor: pointer;
 }
+
+.nav-logo-wrapper {
+  width: 50%; 
+  color: #fff; 
+  float: left;
+}

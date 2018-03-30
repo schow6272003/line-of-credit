@@ -1,6 +1,5 @@
 $(document).ready( function() {
 
-
  $("#user-sign-out-link").on("click", function() {
             $.ajax({
               url:"/api/v1/sessions/user_id",
@@ -16,14 +15,8 @@ $(document).ready( function() {
                   }
               },
               error: function(xhr, status, error){
-
-                 console.log("failure");
-                 console.log(xhr);
-                 console.log(status);
                  console.log(error);
                  console.log("unable to log out session");
-
-             
               }
             }); 
    }); 

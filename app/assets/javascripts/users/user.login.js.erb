@@ -1,6 +1,5 @@
 $(document).ready( function() {
 
-
  $("#login-submit-button").on("click", function(){
     $("#invalid-login-alert").hide();
   });
@@ -32,9 +31,6 @@ $(document).ready( function() {
               },
               dataType:"json",
               success: function(jwt, textStatus, xhr){
-
-                console.log(jwt);
-                console.log(xhr.status)
                 if (xhr.status == 201) {
                   window.location.replace("/credit_lines");
                 } else {
@@ -70,7 +66,6 @@ $(document).ready( function() {
         });
 
         (response) ?  $(element).removeClass('error') : $(element).addClass('error') ;
-        //(response) ?  $(element).addClass('error') : $(element).removeClass('error') ;
         return response;
       },
        "That email address does not exist!"

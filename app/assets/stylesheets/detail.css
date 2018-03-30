@@ -25,3 +25,8 @@ table.table-custum  tr  td {
   display: none;
 }
 
+#transaction-processing-text {
+  color:#2fa15f;
+  font-weight: bold;
+  display: none;
+}

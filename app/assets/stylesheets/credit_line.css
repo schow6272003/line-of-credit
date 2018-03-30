@@ -1,0 +1,29 @@
+.credit-line-header-block {
+  width: 100%; 
+  height: 70px; 
+  margin-top: 30px;
+}
+
+#credit-line-detail-crumb-block {
+   display: none;
+}
+
+.credit-line-access-button-block {
+    display: block; 
+    float: left;
+}
+
+.credit-line-delete-button-block {
+    display: block; 
+    float: right;
+}
+
+#credit-line-detail-block {
+   display: none;
+}
+
+.credit-line-modal-title-custom {
+  text-align: center; 
+  font-family: 'Noto Sans TC', sans-serif; 
+  font-size: 22px;
+}

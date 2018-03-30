@@ -1,8 +1,8 @@
 $(document).ready( function() {
 
-if ($("#creditLineForm").length === 0 ) {
-   return false;
-}
+  if ($("#creditLineForm").length === 0 ) {
+     return false;
+  }
 
  $("#open-new-credit-line-modal").on("click", function(){
     $("#creditLineEditInvestorFormModal").modal();
@@ -48,16 +48,15 @@ if ($("#creditLineForm").length === 0 ) {
                                                                     + "</td><td>"+ creditLine.description +"</td><td>"
                                                                     + appTools.numberToCurrency(creditLine.limit) + "</td><td>"+ appTools.numberToCurrency(creditLine.balance) + "</td><td>"
                                                                     + creditLine.interest*100 + "%" +"</td><td>"+ creditLine.number_of_days + " Days"
-                                                                   +  "</td><td>" + '<span style=" display: block; float: left;"><button id="access-to-credit-line"  data-id="'+ creditLine.id +'"  type="button" class="btn btn-info access-to-credit-line">access</button></span><span style="display: block; float: right;"><button id="delete-credit-line" data-id="'+ creditLine.id +'" type="button" class="btn btn-danger delete-credit-line">Cancel</button></span>' +"</td></tr>");
+                                                                   +  "</td><td>" + '<span class="credit-line-access-button-block"  data-id="'+ creditLine.id +'"  type="button" class="btn btn-info access-to-credit-line">access</button></span><span "credit-line-delete-button-block"><button id="delete-credit-line" data-id="'+ creditLine.id +'" type="button" class="btn btn-danger delete-credit-line">Cancel</button></span>' +"</td></tr>");
                                              }
                                             window.location.replace("/credit_lines");
                                         },
                                         error: function(xhr, status, error){
                                             window.location.replace("/credit_lines");
-                                          console.log("failed")
+                                             console.log(error)
                                         }
                                       });  
                            }
                         });
-
 });

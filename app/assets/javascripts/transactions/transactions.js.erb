@@ -3,62 +3,101 @@ $(document).ready( function() {
     return false;
   }
 
-  $(".transaction-submit-button").on("click", function(){
-    var creditLineBalance =  Number($("#credit-line-credit-balance-transaction").val());
-    var transactionAmount =  Number($("#transaction-amount-input").val());
-    var difference = 0;
-    var option = $(this).data("option");
+  $("#transaction-form").validate({
+        onkeyup: false,
+        onclick: false,
+        rules:{
+           "transaction-amount-input": {
+               number: true,
+               required: true,
+               amountCheck: function() {
+                    return $("#transaction-option").val()
+               }
+           }
+        },
+        submitHandler: function(form, event) {
+          $.ajax({
+            url:"/api/v1/transactions",
+            headers: {
+                    'Authorization':  $("#session_id").data("id")
+                  },
+            method: "post",
+            data:{
+              "credit_line_id": $(".transaction-submit-button").data("creditlineid"),
+              "amount": $("#transaction-amount-input").val(), 
+              "option":  $("#transaction-option").val()
+            },
+            dataType:"json",
+            success: function(Transaction, textStatus, xhr){
+              var withdraw, deposit;
+            if (xhr.status == 201) {
+                    $("#transaction-processing-text").fadeIn(1000,function(){
+                        $(this).text("Complete");
+                         $(this).fadeOut(1500, function(){
+                            $(this).text("Processing.....");
+                         })
+                    })
+                      if (Transaction.option == "withdraw" ) {
+                          withdraw = appTools.numberToCurrency(Transaction.amount);
+                          deposit  = "";
+                      } else if (Transaction.option == "deposit") {
+                         deposit = appTools.numberToCurrency(Transaction.amount);
+                         withdraw = "";
+                      }
 
-     if (option == "deposit") {
-       creditLineBalance + Number($("#transaction-amount-input").val());
+              $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(Transaction.created_at) 
+                                                      + "</td><td>" + withdraw + "</td><td>"+ deposit + "</td><td>"
+                                                      + appTools.numberToCurrency(Transaction.remaining_balance) +"</td></tr>");
 
-     } else if ( option == "withdraw" ) {
-      difference =  creditLineBalance - Number($("#transaction-amount-input").val());
-     }
+              $("#credit-line-credit-balance").text(appTools.numberToCurrency(Transaction.remaining_balance));
+              $("#credit-line-credit-balance-transaction").val(Transaction.remaining_balance);
+            }
 
-
-        return false;
-        $.ajax({
-          url:"/api/v1/transactions",
-          headers: {
-                  'Authorization':  $("#session_id").data("id")
-                },
-          method: "post",
-          data:{
-            "credit_line_id": $(this).data("creditlineid"),
-            "amount": $("#transaction-amount-input").val(), 
-            "option": $(this).data("option")
-          },
-          dataType:"json",
-          success: function(Transaction, textStatus, xhr){
-            var withdraw, deposit;
-          if (xhr.status == 201) {
-                    if (Transaction.option == "withdraw" ) {
-                        withdraw = appTools.numberToCurrency(Transaction.amount);
-                        deposit  = "";
-                    } else if (Transaction.option == "deposit") {
-                       deposit = appTools.numberToCurrency(Transaction.amount);
-                       withdraw = "";
-                    }
-
-                $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(Transaction.created_at) 
-                                                    + "</td><td>" + withdraw + "</td><td>"+ deposit + "</td><td>"
-                                                    + appTools.numberToCurrency(Transaction.remaining_balance) +"</td></tr>");
+            $("#transaction-amount-input").val("");
+              console.log("success");
+            },
+            error: function(xhr, status, error){
+              console.log("failed")
+               $("#transaction-amount-input").val("");
+            }
+           });
+         }
+     })
 
 
-            $("#credit-line-credit-balance").text(appTools.numberToCurrency(Transaction.remaining_balance));
-            $("#credit-line-credit-balance-transaction").val(Transaction.remaining_balance);
+     $('.transaction-submit-button').on('click', function(evt) {
+          $("#transaction-option").val($(this).data("option"));  
+      });
+
+
+     // Validate Email Remote Check
+      $.validator.addMethod("amountCheck", function (value, element, option)
+       {   
+          var creditLineBalance =  Number($("#credit-line-credit-balance-transaction").val());
+          var transactionAmount =  Number(value);
+          var creditLineLimit =  Number($("#credit-line-limit-transaction").val());
+          var response = true;
+           if (option == "deposit") {
+             difference = creditLineBalance + Number($("#transaction-amount-input").val());
+             if (creditLineLimit < difference ) {
+               response =  false;
+             } else {
+               response = true;
+             }
+
+           } else if ( option == "withdraw" ) {
+            difference =  creditLineBalance - Number($("#transaction-amount-input").val());
+            if (  0 > difference ) {
+              response =  false;
+            } else {
+              response =  true;
+            }
+           }
+          (response) ? $(element).removeClass('error') : $(element).addClass('error');
+          return response;
+        },
+          function(param, element){
+           return (param == "deposit") ? "Balance can not be over credit limit." : "Balance can not be below credit limit."
           }
-
-          $("#transaction-amount-input").val("");
-            console.log("success");
-          },
-          error: function(xhr, status, error){
-            console.log("failed")
-             $("#transaction-amount-input").val("");
-          }
-        }); 
-
-  }); //End of submit transaction 
-  
+      );
 });

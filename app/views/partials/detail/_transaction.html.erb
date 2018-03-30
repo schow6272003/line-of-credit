@@ -1,14 +1,18 @@
-
 <form id="transaction-form">
   <div class="form-row">
-     <div class="col-md-7 mb-3">
-      <label for="transaction-amount-input">Amount</label>
-      <input type="text" id="transaction-amount-input" >
+     <div class="col-md-5 mb-3">
+      <div>
+        <label for="transaction-amount-input">Amount</label>
+        <input type="text" id="transaction-amount-input" name="transaction-amount-input" required>
+      </div>
+       <span id="transaction-processing-text">Processing.....</span>
     </div>
     <div class="col-md-4 mb-3">
       <input id="credit-line-credit-balance-transaction" type="hidden" value="" >
-      <button id="transaction-withdraw-button" type="button" class="btn btn-primary mb-2 transaction-submit-button" data-option="withdraw" data-creditlineid>Withdraw</button>
-      <button id="transaction-deposit-button" type="button" class="btn btn-warning mb-2 transaction-submit-button" data-option="deposit" data-creditlineid>Payment</button>
+      <input id="credit-line-limit-transaction" type="hidden" value="" >
+      <input id="transaction-option" type="hidden" value="" >
+      <button id="transaction-withdraw-button" type="submit" class="btn btn-primary mb-2 transaction-submit-button" data-option="withdraw" data-creditlineid>Withdraw</button>
+      <button id="transaction-deposit-button" type="submit" class="btn btn-warning mb-2 transaction-submit-button" data-option="deposit" data-creditlineid>Payment</button>
     </div>
   </div>
 </form>

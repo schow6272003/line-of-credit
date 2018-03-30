@@ -1,0 +1,10 @@
+.page-main-block {
+  height: 400px; 
+  margin-top: 100px; 
+  text-align: center;
+}
+
+.page-main-text {
+  font-size: 32px;
+  color: #fff
+}

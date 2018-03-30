@@ -19,11 +19,11 @@ $(document).ready( function() {
               $("#open-new-credit-line-modal").hide();
               $("#credit-line-detail-crumb-block").fadeIn();
               $("#credit-line-detail-block").fadeIn();
-             
               $("#credit-line-credit-date").text( appTools.formatDate(data.credit_line.created_at));
               $("#credit-line-credit-description").text(data.credit_line.description);
               $("#credit-line-description").text(data.credit_line.description);
               $("#credit-line-credit-limit").text(appTools.numberToCurrency(data.credit_line.limit));
+              $("#credit-line-limit-transaction").val(data.credit_line.limit);
               $("#credit-line-credit-balance").text(appTools.numberToCurrency(data.credit_line.balance));
               $("#credit-line-credit-balance-transaction").val(data.credit_line.balance);
               $("#credit-line-credit-arp").text(data.credit_line.interest*100 + "%");
@@ -33,11 +33,9 @@ $(document).ready( function() {
                   var payOffTransaction;
                   var lastPaymentCycle = data.payment_cycles[data.payment_cycles.length - 1];
                   var transactions = data.transactions;
-
-
                    if (lastPaymentCycle.paid == false){
-                     $("#no-payment-due-reminder").hide();
-                     $("#payoff-form-table").show();
+                      $("#no-payment-due-reminder").hide();
+                      $("#payoff-form-table").show();
                       $(".payoff-reminder").show();
                       $("#transaction-form").hide();
                       $("#credit-line-due-date").text(appTools.formatDate(lastPaymentCycle.due_date));
@@ -50,7 +48,6 @@ $(document).ready( function() {
                        }
 
                       $("#payment-due-date").text(appTools.formatDate(lastPaymentCycle.due_date));
-                      
                       $("#credit-line-outstanding-balance").text(appTools.numberToCurrency(lastPaymentCycle.outstanding_amount));
                       $("#credit-line-credit-total-payoff-interest").text( appTools.numberToCurrency( Number(lastPaymentCycle.accrued_interest)) );
                       $("#credit-line-total-payoff-balance").text(appTools.numberToCurrency(Number(lastPaymentCycle.outstanding_amount) + Number(lastPaymentCycle.accrued_interest)));
@@ -71,9 +68,7 @@ $(document).ready( function() {
                 } else {
                    $("#payoff-form-table").hide();
                 }
- 
              $(".transaction-submit-button").attr("data-creditlineid",data.credit_line.id);
-              
               if (data.transactions.length > 0 ) {
                   var deposit, withdraw;
                   $.each(data.transactions, function(i, t){
@@ -84,35 +79,36 @@ $(document).ready( function() {
                          deposit = appTools.numberToCurrency(Number(t.amount));
                          withdraw = "";
                       }
+                    if (t.option != "pay_off") {
                      $("#transactions-table-row").append("<tr><td>"+ appTools.formatDate(t.created_at) + "</td><td>" 
                                                        + withdraw + "</td><td>"+ deposit + "</td><td>"
                                                      + appTools.numberToCurrency(t.remaining_balance) +"</td></tr>");
+                    }
                   })
                }
-
-            } //End of if (xhr.status == 200) block
-
+            } 
           },
           error: function(xhr, status, error){
-              console.log(xhr.status);
               console.log(error);
           }
         });
   })
 
-  $("#return-to-credit-line-main").on("click",function(){
-    $("#line-credit-main-table").fadeIn();
-    $("#open-new-credit-line-modal").fadeIn();
-    $("#credit-line-detail-crumb-block").hide();
-    $("#credit-line-detail-block").hide();
-    $("#transactions-table-row").empty();
-    $('.nav-tabs a[href="#summary"]').tab('show');
-    $("#credit-line-due-date").text("");
-    $("#credit-line-credit-total-payoff-interest").text("");
-    $("#credit-line-outstanding-balance").text("");
-    $("#payoff-payment-cycle-id").text("");
-  })
-
+    $("#return-to-credit-line-main").on("click",function(){
+      $("#line-credit-main-table").fadeIn();
+      $("#open-new-credit-line-modal").fadeIn();
+      $("#credit-line-detail-crumb-block").hide();
+      $("#credit-line-detail-block").hide();
+      $("#transactions-table-row").empty();
+      $('.nav-tabs a[href="#summary"]').tab('show');
+      $("#credit-line-due-date").text("");
+      $("#credit-line-credit-total-payoff-interest").text("");
+      $("#credit-line-outstanding-balance").text("");
+      $("#payoff-payment-cycle-id").text("");
+      $("#transaction-form").show();
+      $(".payoff-reminder").hide();
+      $("#transaction-amount-input-error").remove();
+    })
   /***************** Access Credit Line *****************/
 
   /***************** Delete Credit Line *****************/
@@ -122,23 +118,17 @@ $(document).ready( function() {
           headers: {
                 'Authorization': $("#session_id").data("id")
               },
-          data:{
-            "user_id": 2
-          },
           method: "delete",
           dataType:"json",
           success: function(creditLineId, textStatus, xhr){
             if (xhr.status == 200) {
               $("#credit-line-"+ creditLineId).remove();
             }
-
           },
           error: function(xhr, status, error){
-            console.log("failed")
+            console.log(error);
           } 
         });
     })
   /***************** Delete Credit Line *****************/
-
-
 });

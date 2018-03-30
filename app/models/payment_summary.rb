@@ -46,7 +46,7 @@ private
       unless transactions.count == 0
         if beginning_date < transactions.first.created_at.to_date
            last_transaction = credit_line.transactions.where("id <  ? ", transactions.first.id ).last 
-           last_transaction_remaining_balance = (last_Ptransaction) ? last_transaction.remaining_balance :  0
+           last_transaction_remaining_balance = (last_transaction) ? last_transaction.remaining_balance :  0
           days_at_this_balance = (beginning_date.to_date..transactions.first.created_at.to_date).count.to_i - 1
           total_interest += (credit_line.limit - last_transaction_remaining_balance) * credit_line.interest / 365 * days_at_this_balance
         end 
